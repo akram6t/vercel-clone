@@ -1,0 +1,13 @@
+
+
+<!-- build and make image -->
+<!-- docker build -t build-server /home/akram/Desktop/vercel-clone/build-server -->
+
+
+ 
+ <!-- run image with ecs or railway -->
+ <!-- docker run   --network="host"   -e PROJECT_ID="your-project-id"   -e DEPLOYEMENT_ID="your-deployment-id"   -e GIT_REPOSITORY__URL="https://github.com/akram6t/react-admin-layout.git"   build-server -->
+
+
+<!-- output -->
+<!-- https://idoxbzo.sufydely.com/__outputs/your-project-id/index.html -->

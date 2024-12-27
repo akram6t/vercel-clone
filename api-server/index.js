@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 const { generateSlug } = require('random-word-slugs')
 const { ECSClient, RunTaskCommand } = require('@aws-sdk/client-ecs')
@@ -21,24 +22,22 @@ const io = new Server({ cors: '*' })
 
 const kafka = new Kafka({
     clientId: `api-server`,
-    brokers: [''],
-    ssl: {
-        ca: [fs.readFileSync(path.join(__dirname, 'kafka.pem'), 'utf-8')]
-    },
-    sasl: {
-        username: '',
-        password: '',
-        mechanism: 'plain'
-    }
-
+    brokers: [process.env.KAFKA_URL],
 })
 
 const client = createClient({
-    host: '',
-    database: '',
-    username: '',
-    password: ''
+    host: process.env.CLICKHOUSE_HOST,
+    database: process.env.CLICKHOUSE_DBNAME,
+    username: process.env.CLICKHOUSE_USERNAME,
+    password: process.env.CLICKHOUSE_PASSWORD,
+    protocol: 'https:',
+    port: 8443,
+    tls: {
+        rejectUnauthorized: false
+    }
 })
+
+
 
 const consumer = kafka.consumer({ groupId: 'api-server-logs-consumer' })
 
@@ -191,3 +190,20 @@ async function initkafkaConsumer() {
 initkafkaConsumer()
 
 app.listen(PORT, () => console.log(`API Server Running..${PORT}`))
+
+const producer = kafka.producer();
+
+async function insertTesting(log) {
+
+    await producer.connect();
+    await producer.send({
+        topic: 'container-logs',
+        messages: [
+            {
+                key: 'logs',
+                value: JSON.stringify({  DEPLOYEMENT_ID: 'DEPLOYEMENT_ID', log:`log:${log}`})
+            }
+        ]
+    })
+    console.log('send successfuly...')
+}
