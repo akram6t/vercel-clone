@@ -4,7 +4,7 @@ const fs = require('fs')
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 const mime = require('mime-types');
 const { Upload } = require('@aws-sdk/lib-storage');
-const { Readable } = require('stream');
+// const { Readable } = require('stream');
 // const { Kafka } = require('kafkajs')
 
 const s3Client = new S3Client({
@@ -33,14 +33,52 @@ async function publishLog(log) {
     // await producer.send({ topic: `container-logs`, messages: [{ key: 'log', value: JSON.stringify({ PROJECT_ID, DEPLOYEMENT_ID, log }) }] })
 }
 
-async function init() {
+const envVariables = {
+    // Only include BUILD_ prefixed variables and strip BUILD_ prefix
+    ...Object.keys(process.env)
+        .filter(key => key.startsWith('BUILD_'))
+        .reduce((obj, key) => {
+            // Remove BUILD_ prefix and keep the rest
+            const newKey = key.replace('BUILD_', '');
+            obj[newKey] = process.env[key];
+            return obj;
+        }, {})
+};
 
+// Create .env file in output directory
+async function createEnvFile() {
+    try {
+        // Create output directory if it doesn't exist
+        const outputDir = path.join(__dirname, 'output');
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+        }
+
+        const envContent = Object.entries(envVariables)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('\n');
+
+        console.log('Writing .env file with content:', envContent);
+        
+        const envPath = path.join(__dirname, 'output', '.env');
+        fs.writeFileSync(envPath, envContent);
+        console.log('.env file created at:', envPath);
+    } catch (error) {
+        console.error('Error creating .env file:', error);
+        throw error;
+    }
+}
+
+
+async function init() {
     // await producer.connect()
+    await createEnvFile();
 
     console.log('Executing script.js')
     await publishLog('Build Started...')
     const outDirPath = path.join(__dirname, 'output')
 
+    console.log('npm install && build');
     const p = exec(`cd ${outDirPath} && npm install && npm run build`)
 
     p.stdout.on('data', function (data) {
