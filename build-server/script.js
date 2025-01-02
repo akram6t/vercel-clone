@@ -7,15 +7,26 @@ const { Upload } = require('@aws-sdk/lib-storage');
 // const { Readable } = require('stream');
 // const { Kafka } = require('kafkajs')
 
+// Hardcoded configuration for LocalStack
 const s3Client = new S3Client({
-    // region: 'vercel-clone.mos.ap-southeast-3.sufybkt.com',
-    region: "ap-southeast-3", // Asia Pacific (Hanoi) RegionID
-    endpoint: "https://mos.ap-southeast-3.sufybkt.com", // Asia Pacific (Hanoi) Endpoint
+    region: 'us-east-1',
     credentials: {
-        accessKeyId: 'Ml7yU1hLHoY_mvx6fCoIfGvqMvtbctHftCc-KAcE',
-        secretAccessKey: '9a0dcRwNDjhPCTUQwepBlzEVd29kBFz7zUn5zt_Y'
-    }
-})
+        accessKeyId: 'test',
+        secretAccessKey: 'test',
+    },
+    endpoint: 'http://localhost:4566',
+    forcePathStyle: true,
+});
+
+// const s3Client = new S3Client({
+// region: 'vercel-clone.mos.ap-southeast-3.sufybkt.com',
+// region: "ap-southeast-3", // Asia Pacific (Hanoi) RegionID
+// endpoint: "https://mos.ap-southeast-3.sufybkt.com", // Asia Pacific (Hanoi) Endpoint
+// credentials: {
+//     accessKeyId: 'Ml7yU1hLHoY_mvx6fCoIfGvqMvtbctHftCc-KAcE',
+//     secretAccessKey: '9a0dcRwNDjhPCTUQwepBlzEVd29kBFz7zUn5zt_Y'
+// }
+// })
 
 const PROJECT_ID = process.env.PROJECT_ID
 const DEPLOYEMENT_ID = process.env.DEPLOYEMENT_ID
@@ -59,7 +70,7 @@ async function createEnvFile() {
             .join('\n');
 
         console.log('Writing .env file with content:', envContent);
-        
+
         const envPath = path.join(__dirname, 'output', '.env');
         fs.writeFileSync(envPath, envContent);
         console.log('.env file created at:', envPath);

@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DeploymentStatus {
+  NOT_STARTED
+  QUEUED
+  IN_PROGRESS
+  READY
+  FAIL
+}
+
+model User {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  name           String
+  avatar         String?
+  githubId       String    @unique @map("github_id")
+  githubUsername String    @map("github_username")
+  accessToken    String
+  projects       Project[]
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+}
+
+model Project {
+  id           String       @id @default(uuid())
+  slug         String       @unique
+  user         User         @relation(fields: [userId], references: [id])
+  userId       String       @map("user_id")
+  gitUrl       String       @map("git_url")
+  subDomain    String       @map("sub_domain")
+  customDomain String?      @map("custom_domain")
+  deployments  Deployment[]
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  @@index([subDomain, customDomain])
+}
+
+model Deployment {
+  id        String           @id @default(uuid())
+  project   Project          @relation(fields: [projectId], references: [id])
+  projectId String           @map("project_id")
+  status    DeploymentStatus @default(NOT_STARTED)
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+}
