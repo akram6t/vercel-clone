@@ -1,32 +1,20 @@
 {
   "name": "api-server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "tsx watch src/index.ts"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-ecs": "^3.511.0",
-    "@clickhouse/client": "^0.2.9",
-    "@prisma/client": "^5.9.1",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
+    "@clickhouse/client": "^1.10.0",
+    "@hono/node-server": "^1.13.7",
+    "@prisma/client": "^6.1.0",
+    "hono": "^4.6.16",
     "kafkajs": "^2.2.4",
-    "random-word-slugs": "^0.1.7",
-    "socket.io": "^4.7.4",
-    "uuid": "^9.0.1",
-    "zod": "^3.22.4"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
-    "dotenv": "^16.4.7",
-    "nodemon": "^3.1.9",
-    "prisma": "^5.9.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "prisma": "^6.1.0",
+    "tsx": "^4.7.1"
   }
 }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { Chip } from "@nextui-org/chip";
@@ -69,9 +68,11 @@ const ProjectDeployments: React.FC<DeploymentsProps> = () => {
 
     return (
         <ProjectTabsLayout>
-            <Card>
-                <CardHeader className="flex justify-between">
-                    <h2 className="text-2xl font-bold">Deployment History</h2>
+            {/* Replace Card with a div */}
+            <div className="w-full bg-neutral-50 dark:bg-neutral-950 rounded-lg">
+                {/* CardHeader replacement */}
+                <div className="flex justify-between items-center p-6">
+                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Deployment History</h2>
                     <Button
                         color="primary"
                         startContent={<Rocket size={18} />}
@@ -79,8 +80,10 @@ const ProjectDeployments: React.FC<DeploymentsProps> = () => {
                     >
                         Deploy Now
                     </Button>
-                </CardHeader>
-                <CardBody>
+                </div>
+
+                {/* CardBody replacement */}
+                <div className="p-6">
                     <Table aria-label="Deployments history">
                         <TableHeader>
                             <TableColumn>STATUS</TableColumn>
@@ -94,7 +97,9 @@ const ProjectDeployments: React.FC<DeploymentsProps> = () => {
                                 <TableRow key={deployment.id}>
                                     <TableCell>{getStatusChip(deployment.status)}</TableCell>
                                     <TableCell>
-                                        <span className="font-mono">{deployment.id.slice(0, 8)}</span>
+                                        <span className="font-mono text-neutral-900 dark:text-neutral-100">
+                                            {deployment.id.slice(0, 8)}
+                                        </span>
                                     </TableCell>
                                     <TableCell>
                                         <Link
@@ -106,18 +111,18 @@ const ProjectDeployments: React.FC<DeploymentsProps> = () => {
                                             {projectDomain}
                                         </Link>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="text-neutral-900 dark:text-neutral-100">
                                         {format(new Date(deployment.createdAt), 'MM/dd/yyyy, h:mm:ss a')}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="text-neutral-900 dark:text-neutral-100">
                                         {calculateDuration(deployment.createdAt, deployment.updatedAt)}
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
-                </CardBody>
-            </Card>
+                </div>
+            </div>
         </ProjectTabsLayout>
     );
 };

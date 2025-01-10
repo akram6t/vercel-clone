@@ -1,58 +1,48 @@
 import React from 'react';
-import { Progress } from "@nextui-org/progress";
 import { Button } from "@nextui-org/button";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { Chip } from "@nextui-org/chip";
 import { Divider } from "@nextui-org/divider";
 import { Link } from "@nextui-org/link";
-import {
-    Github as GitHubIcon,
-    Star,
-    GitFork,
-    Eye,
-    ExternalLink
-} from 'lucide-react';
-import { format } from 'date-fns'; // Import date-fns
+import { ExternalLink, Github, RefreshCcw } from 'lucide-react';
 import ProjectTabsLayout from '@/layouts/project-tabs';
 
 const ProjectOverview = () => {
     // Fake project data
     const project = {
-        id: "proj_123",
         gitUrl: "https://github.com/username/my-project",
         subDomain: "my-project",
         customDomain: "www.my-project.com",
-        deployments: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
     };
 
-    // Fake GitHub data
-    const gitHubData = {
-        name: "my-project",
-        description: "A modern web application built with Next.js and deployed automatically",
-        stars: 123,
-        forks: 45,
-        watchers: 67,
-        defaultBranch: "main",
-        language: "TypeScript",
+    // Deployment details
+    const deployment = {
+        url: "next-opensource-projects-ulva-954fdgd4p-akram-khans-projects.vercel.app",
+        domains: [
+            "next-opensource-projects-ulva.vercel.app",
+            "www.my-project.com"
+        ],
+        status: "Ready",
+        created: "26/12/24",
+        branch: "main",
     };
 
     const getDomainUrl = () => {
         return project.customDomain || `${project.subDomain}.yourdomain.com`;
     };
 
-    // Format dates using date-fns
-    const lastUpdated = format(new Date(project.updatedAt), 'MM/dd/yyyy');
-    const createdAt = format(new Date(project.createdAt), 'MM/dd/yyyy');
+    // Truncate long URLs
+    const truncateUrl = (url: string, maxLength: number = 30) => {
+        return url.length > maxLength ? `${url.substring(0, maxLength)}...` : url;
+    };
 
     return (
         <ProjectTabsLayout>
-            <Card className="w-full">
-                <CardHeader className="flex justify-between items-start">
+            {/* Replace Card with a div */}
+            <div className="w-full bg-neutral-50 dark:bg-neutral-950 rounded-lg">
+                {/* CardHeader replacement */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6">
                     <div className="flex-1">
-                        <h2 className="text-2xl font-bold">{gitHubData.name}</h2>
-                        <p className="text-gray-500 mt-1">{gitHubData.description}</p>
+                        <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">My Project</h2>
                     </div>
                     <div className="flex gap-2">
                         <Button
@@ -69,95 +59,104 @@ const ProjectOverview = () => {
                             href={project.gitUrl}
                             target="_blank"
                             variant="bordered"
-                            startContent={<GitHubIcon size={18} />}
+                            startContent={<Github size={18} />}
                         >
                             Repository
                         </Button>
+                        <Button
+                            variant="bordered"
+                            startContent={<RefreshCcw size={18} />}
+                        >
+                        </Button>
                     </div>
-                </CardHeader>
+                </div>
 
+                {/* Divider */}
                 <Divider />
 
-                <CardBody>
+                {/* CardBody replacement */}
+                <div className="p-6">
+                    <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
+                        Deployment Details
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-6">
+                        {/* Deployment URL and Domains */}
+                        <div className="space-y-4">
                             <div>
-                                <h3 className="text-lg font-semibold mb-3">Repository Info</h3>
-                                <div className="flex gap-4">
-                                    <Chip
-                                        variant="flat"
-                                        startContent={<Star size={16} />}
-                                    >
-                                        {gitHubData.stars} stars
+                                <span className="text-sm text-gray-500 dark:text-neutral-400">Deployment URL:</span>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <Chip variant="flat">
+                                        <Link href={`https://${deployment.url}`} target="_blank" className="text-sm text-neutral-900 dark:text-neutral-100">
+                                            {truncateUrl(deployment.url)}
+                                        </Link>
                                     </Chip>
-                                    <Chip
-                                        variant="flat"
-                                        startContent={<GitFork size={16} />}
+                                    <Button
+                                        as={Link}
+                                        href={`https://${deployment.url}`}
+                                        target="_blank"
+                                        size="sm"
+                                        variant="light"
+                                        endContent={<ExternalLink size={14} />}
                                     >
-                                        {gitHubData.forks} forks
-                                    </Chip>
-                                    <Chip
-                                        variant="flat"
-                                        startContent={<Eye size={16} />}
-                                    >
-                                        {gitHubData.watchers} watching
-                                    </Chip>
+                                        Go
+                                    </Button>
                                 </div>
                             </div>
 
                             <div>
-                                <h3 className="text-lg font-semibold mb-3">Domain Configuration</h3>
-                                <div className="space-y-2">
-                                    <div>
-                                        <span className="text-sm text-gray-500">Primary Domain:</span>
-                                        <Chip className="ml-2" variant="flat">{getDomainUrl()}</Chip>
-                                    </div>
-                                    {project.customDomain && (
-                                        <div>
-                                            <span className="text-sm text-gray-500">Custom Domain:</span>
-                                            <Chip className="ml-2" variant="flat">{project.customDomain}</Chip>
+                                <span className="text-sm text-gray-500 dark:text-neutral-400">Domains:</span>
+                                <div className="flex flex-col gap-2 mt-1">
+                                    {deployment.domains.map((domain, index) => (
+                                        <div key={index} className="flex items-center gap-2">
+                                            <Chip variant="flat">
+                                                <Link href={`https://${domain}`} target="_blank" className="text-sm text-neutral-900 dark:text-neutral-100">
+                                                    {truncateUrl(domain)}
+                                                </Link>
+                                            </Chip>
+                                            <Button
+                                                as={Link}
+                                                href={`https://${domain}`}
+                                                target="_blank"
+                                                size="sm"
+                                                variant="light"
+                                                endContent={<ExternalLink size={14} />}
+                                            >
+                                                Go
+                                            </Button>
                                         </div>
-                                    )}
+                                    ))}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="space-y-6">
+                        {/* Status, Created, and Source */}
+                        <div className="space-y-4">
                             <div>
-                                <h3 className="text-lg font-semibold mb-3">Project Status</h3>
-                                <Progress
-                                    value={75}
-                                    color="success"
-                                    className="mb-2"
-                                    size="md"
-                                />
-                                <div className="flex justify-between mt-2">
-                                    <span className="text-sm text-gray-500">
-                                        Last updated: {lastUpdated}
-                                    </span>
-                                    <Chip size="sm" variant="flat">{gitHubData.language}</Chip>
-                                </div>
+                                <span className="text-sm text-gray-500 dark:text-neutral-400">Status:</span>
+                                <Chip className="ml-2" color="success" variant="flat">
+                                    {deployment.status}
+                                </Chip>
                             </div>
 
                             <div>
-                                <h3 className="text-lg font-semibold mb-3">Recent Activity</h3>
-                                <div className="space-y-2">
-                                    <div>
-                                        <span className="text-sm text-gray-500">Default Branch:</span>
-                                        <Chip className="ml-2" size="sm">{gitHubData.defaultBranch}</Chip>
-                                    </div>
-                                    <div>
-                                        <span className="text-sm text-gray-500">Created:</span>
-                                        <span className="ml-2">
-                                            {createdAt}
-                                        </span>
-                                    </div>
+                                <span className="text-sm text-gray-500 dark:text-neutral-400">CreatedAt:</span>
+                                <span className="ml-2 text-sm text-neutral-900 dark:text-neutral-100">
+                                    {deployment.created}
+                                </span>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500 dark:text-neutral-400">Branch:</span>
+                                <div className="ml-2">
+                                    <Chip variant="flat" className="text-sm text-neutral-900 dark:text-neutral-100">
+                                        {deployment.branch}
+                                    </Chip>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </CardBody>
-            </Card>
+                </div>
+            </div>
         </ProjectTabsLayout>
     );
 };

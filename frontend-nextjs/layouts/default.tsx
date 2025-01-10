@@ -7,7 +7,7 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import React from "react";
 import { Session } from "next-auth";
 import { Avatar } from "@nextui-org/avatar";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/dropdown";
 
 export default function DefaultLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
           }
           <NavbarItem>
             {session ? (
-              <UserProfilePopover session={session} handleSignOut={handleSignOut} />
+              <UserProfileDropdown session={session} handleSignOut={handleSignOut} />
             ) : (
               <Link href="/login" className="text-gray-700">
                 <Button as={'button'} variant="solid" color="primary">
@@ -61,30 +61,25 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
   );
 }
 
-const UserProfilePopover:React.FC<{session: Session, handleSignOut: () => void}> = ({ session, handleSignOut }) => {
+const UserProfileDropdown: React.FC<{ session: Session, handleSignOut: () => void }> = ({ session, handleSignOut }) => {
   return (
-    <Popover placement="bottom">
-      <PopoverTrigger>
+    <Dropdown>
+      <DropdownTrigger>
         <Avatar
           src={session.user.avatar as string}
           alt={session.user.name as string}
           className="cursor-pointer hover:opacity-80 transition-opacity"
         />
-      </PopoverTrigger>
-      <PopoverContent className="w-64">
-        <div className="space-y-3 p-4">
-          <div className="space-y-1">
-            <p className="font-medium text-sm">{session.user.name}</p>
-            <p className="text-sm text-gray-500">{session.user.email}</p>
-          </div>
-          <Button
-            onClick={handleSignOut}
-            className="w-full justify-center text-sm"
-          >
-            Sign out
-          </Button>
-        </div>
-      </PopoverContent>
-    </Popover>
+      </DropdownTrigger>
+      <DropdownMenu aria-label="User menu">
+        <DropdownItem key="profile" className="flex flex-col items-start">
+          <p className="font-medium text-sm">{session.user.name}</p>
+          <p className="text-sm text-gray-500">{session.user.email}</p>
+        </DropdownItem>
+        <DropdownItem key="signout" onClick={handleSignOut} className="text-danger">
+          Sign out
+        </DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
   );
 };

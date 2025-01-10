@@ -1,6 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum DeployementStatus {
+enum DeploymentStatus {
   NOT_STARTED
   QUEUED
   IN_PROGRESS
@@ -18,24 +21,39 @@ enum DeployementStatus {
   FAIL
 }
 
-model Project {
-  id           String        @id @default(uuid())
-  name         String
-  gitURL       String        @map("git_url")
-  subDomain    String        @map("subdomain")
-  customDomain String?       @map("custom_domain")
-  Deployement  Deployement[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  name           String
+  avatar         String?
+  githubId       String    @unique @map("github_id")
+  githubUsername String    @map("github_username")
+  accessToken    String
+  projects       Project[]
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
 }
 
-model Deployement {
-  id        String            @id @default(uuid())
-  project   Project           @relation(fields: [projectId], references: [id])
-  projectId String            @map("project_id")
-  status    DeployementStatus @default(NOT_STARTED)
+model Project {
+  id           String       @id @default(uuid())
+  user         User         @relation(fields: [userId], references: [id])
+  userId       String       @map("user_id")
+  gitUrl       String       @map("git_url")
+  subDomain    String       @map("sub_domain")
+  customDomain String?      @map("custom_domain")
+  deployments  Deployment[]
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@index([subDomain, customDomain])
+}
+
+model Deployment {
+  id        String           @id @default(uuid())
+  project   Project          @relation(fields: [projectId], references: [id])
+  projectId String           @map("project_id")
+  branch    String
+  status    DeploymentStatus @default(NOT_STARTED)
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
 }

@@ -11,6 +11,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install --production
 
+# Install bun, yarn, and pnpm globally using npm
+RUN npm install -g pnpm
+
 # Copy application files with explicit paths
 COPY ./main.sh ./main.sh
 COPY ./script.js ./script.js

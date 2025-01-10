@@ -150,8 +150,8 @@ const ProjectAnalytics = () => {
 
     return (
         <ProjectTabsLayout>
-            <Card className="w-full">
-                <CardHeader className="flex justify-between items-center px-6 py-4">
+            <div className="w-full bg-neutral-50 dark:bg-neutral-950 rounded-lg p-6">
+                <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-semibold">Analytics Dashboard</h2>
                     <Dropdown>
                         <DropdownTrigger>
@@ -173,175 +173,171 @@ const ProjectAnalytics = () => {
                             <DropdownItem key="last_month">Last Month</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                </CardHeader>
+                </div>
 
-                <Divider />
-
-                <CardBody className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <Card shadow="sm">
-                            <CardBody className="p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Users size={20} className="text-primary" />
-                                    <h3 className="text-sm text-gray-600">Total Visits</h3>
-                                </div>
-                                <p className="text-2xl font-bold">{currentData.visits.toLocaleString()}</p>
-                                <div className="flex items-center mt-2">
-                                    {currentData.trend.visits > 0 ? (
-                                        <TrendingUp size={16} className="text-success mr-1" />
-                                    ) : (
-                                        <TrendingDown size={16} className="text-danger mr-1" />
-                                    )}
-                                    <span className={`text-sm ${currentData.trend.visits > 0 ? 'text-success' : 'text-danger'}`}>
-                                        {Math.abs(currentData.trend.visits)}%
-                                    </span>
-                                </div>
-                            </CardBody>
-                        </Card>
-
-                        <Card shadow="sm">
-                            <CardBody className="p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Clock size={20} className="text-primary" />
-                                    <h3 className="text-sm text-gray-600">Average Load Time</h3>
-                                </div>
-                                <p className="text-2xl font-bold">{currentData.loadTime}s</p>
-                                <div className="flex items-center mt-2">
-                                    {currentData.trend.loadTime < 0 ? (
-                                        <TrendingDown size={16} className="text-success mr-1" />
-                                    ) : (
-                                        <TrendingUp size={16} className="text-danger mr-1" />
-                                    )}
-                                    <span className={`text-sm ${currentData.trend.loadTime < 0 ? 'text-success' : 'text-danger'}`}>
-                                        {Math.abs(currentData.trend.loadTime)}s
-                                    </span>
-                                </div>
-                            </CardBody>
-                        </Card>
-
-                        <Card shadow="sm">
-                            <CardBody className="p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <AlertTriangle size={20} className="text-primary" />
-                                    <h3 className="text-sm text-gray-600">Error Rate</h3>
-                                </div>
-                                <p className="text-2xl font-bold">{currentData.errorRate}%</p>
-                                <div className="flex items-center mt-2">
-                                    {currentData.trend.errorRate < 0 ? (
-                                        <TrendingDown size={16} className="text-success mr-1" />
-                                    ) : (
-                                        <TrendingUp size={16} className="text-danger mr-1" />
-                                    )}
-                                    <span className={`text-sm ${currentData.trend.errorRate < 0 ? 'text-success' : 'text-danger'}`}>
-                                        {Math.abs(currentData.trend.errorRate)}%
-                                    </span>
-                                </div>
-                            </CardBody>
-                        </Card>
-                    </div>
-
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-semibold">Detailed Analytics</h3>
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button
-                                    variant="bordered"
-                                    endContent={<ChevronDown size={16} />}
-                                    startContent={selectedColumn?.icon}
-                                >
-                                    Filter by {selectedTableFilter}
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Table filter selection"
-                                onAction={(key) => setSelectedTableFilter(key as string)}
-                            >
-                                <DropdownItem key="country" startContent={<Globe size={16} />}>Country</DropdownItem>
-                                <DropdownItem key="device" startContent={<Smartphone size={16} />}>Device</DropdownItem>
-                                <DropdownItem key="browser" startContent={<Monitor size={16} />}>Browser</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
-
-                    <Table aria-label="Detailed Analytics Table" className="mb-8">
-                        <TableHeader>
-                            <TableColumn>
-                                <div className="flex items-center gap-2">
-                                    {selectedColumn?.icon}
-                                    {selectedColumn?.label}
-                                </div>
-                            </TableColumn>
-                            <TableColumn>
-                                <div className="flex items-center gap-2">
-                                    <Users size={16} />
-                                    Visits
-                                    <Button
-                                        size="sm"
-                                        variant="light"
-                                        onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                                    >
-                                        {sortOrder === 'asc' ? '↑' : '↓'}
-                                    </Button>
-                                </div>
-                            </TableColumn>
-                        </TableHeader>
-                        <TableBody>
-                            {sortedTableData.map((row, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{row[selectedTableFilter as keyof TableData]}</TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <Progress
-                                                value={(row.visits / maxVisits) * 100}
-                                                color="primary"
-                                                className="w-full"
-                                            />
-                                            <span>{row.visits}</span>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-
-                    <Card className="w-full h-[400px] p-4">
-                        <CardHeader>
-                            <h3 className="text-lg font-semibold">Traffic Overview</h3>
-                        </CardHeader>
-                        <CardBody>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <LineChart data={currentData.chartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Line
-                                        type="monotone"
-                                        dataKey="visits"
-                                        stroke="#06b6d4"
-                                        strokeWidth={2}
-                                        dot={false}
-                                    />
-                                    <Line
-                                        type="monotone"
-                                        dataKey="loadTime"
-                                        stroke="#3b82f6"
-                                        strokeWidth={2}
-                                        dot={false}
-                                    />
-                                    <Line
-                                        type="monotone"
-                                        dataKey="errors"
-                                        stroke="#ef4444"
-                                        strokeWidth={2}
-                                        dot={false}
-                                    />
-                                </LineChart>
-                            </ResponsiveContainer>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <Card shadow="sm">
+                        <CardBody className="p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Users size={20} className="text-primary" />
+                                <h3 className="text-sm text-gray-600">Total Visits</h3>
+                            </div>
+                            <p className="text-2xl font-bold">{currentData.visits.toLocaleString()}</p>
+                            <div className="flex items-center mt-2">
+                                {currentData.trend.visits > 0 ? (
+                                    <TrendingUp size={16} className="text-success mr-1" />
+                                ) : (
+                                    <TrendingDown size={16} className="text-danger mr-1" />
+                                )}
+                                <span className={`text-sm ${currentData.trend.visits > 0 ? 'text-success' : 'text-danger'}`}>
+                                    {Math.abs(currentData.trend.visits)}%
+                                </span>
+                            </div>
                         </CardBody>
                     </Card>
-                </CardBody>
-            </Card>
+
+                    <Card shadow="sm">
+                        <CardBody className="p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Clock size={20} className="text-primary" />
+                                <h3 className="text-sm text-gray-600">Average Load Time</h3>
+                            </div>
+                            <p className="text-2xl font-bold">{currentData.loadTime}s</p>
+                            <div className="flex items-center mt-2">
+                                {currentData.trend.loadTime < 0 ? (
+                                    <TrendingDown size={16} className="text-success mr-1" />
+                                ) : (
+                                    <TrendingUp size={16} className="text-danger mr-1" />
+                                )}
+                                <span className={`text-sm ${currentData.trend.loadTime < 0 ? 'text-success' : 'text-danger'}`}>
+                                    {Math.abs(currentData.trend.loadTime)}s
+                                </span>
+                            </div>
+                        </CardBody>
+                    </Card>
+
+                    <Card shadow="sm">
+                        <CardBody className="p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                                <AlertTriangle size={20} className="text-primary" />
+                                <h3 className="text-sm text-gray-600">Error Rate</h3>
+                            </div>
+                            <p className="text-2xl font-bold">{currentData.errorRate}%</p>
+                            <div className="flex items-center mt-2">
+                                {currentData.trend.errorRate < 0 ? (
+                                    <TrendingDown size={16} className="text-success mr-1" />
+                                ) : (
+                                    <TrendingUp size={16} className="text-danger mr-1" />
+                                )}
+                                <span className={`text-sm ${currentData.trend.errorRate < 0 ? 'text-success' : 'text-danger'}`}>
+                                    {Math.abs(currentData.trend.errorRate)}%
+                                </span>
+                            </div>
+                        </CardBody>
+                    </Card>
+                </div>
+
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold">Detailed Analytics</h3>
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button
+                                variant="bordered"
+                                endContent={<ChevronDown size={16} />}
+                                startContent={selectedColumn?.icon}
+                            >
+                                Filter by {selectedTableFilter}
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            aria-label="Table filter selection"
+                            onAction={(key) => setSelectedTableFilter(key as string)}
+                        >
+                            <DropdownItem key="country" startContent={<Globe size={16} />}>Country</DropdownItem>
+                            <DropdownItem key="device" startContent={<Smartphone size={16} />}>Device</DropdownItem>
+                            <DropdownItem key="browser" startContent={<Monitor size={16} />}>Browser</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+
+                <Table aria-label="Detailed Analytics Table" className="mb-8">
+                    <TableHeader>
+                        <TableColumn>
+                            <div className="flex items-center gap-2">
+                                {selectedColumn?.icon}
+                                {selectedColumn?.label}
+                            </div>
+                        </TableColumn>
+                        <TableColumn>
+                            <div className="flex items-center gap-2">
+                                <Users size={16} />
+                                Visits
+                                <Button
+                                    size="sm"
+                                    variant="light"
+                                    onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                                >
+                                    {sortOrder === 'asc' ? '↑' : '↓'}
+                                </Button>
+                            </div>
+                        </TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                        {sortedTableData.map((row, index) => (
+                            <TableRow key={index}>
+                                <TableCell>{row[selectedTableFilter as keyof TableData]}</TableCell>
+                                <TableCell>
+                                    <div className="flex items-center gap-2">
+                                        <Progress
+                                            value={(row.visits / maxVisits) * 100}
+                                            color="primary"
+                                            className="w-full"
+                                        />
+                                        <span>{row.visits}</span>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+
+                <Card className="w-full h-[400px] p-4">
+                    <CardHeader>
+                        <h3 className="text-lg font-semibold">Traffic Overview</h3>
+                    </CardHeader>
+                    <CardBody>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <LineChart data={currentData.chartData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="name" />
+                                <YAxis />
+                                <Tooltip />
+                                <Line
+                                    type="monotone"
+                                    dataKey="visits"
+                                    stroke="#06b6d4"
+                                    strokeWidth={2}
+                                    dot={false}
+                                />
+                                <Line
+                                    type="monotone"
+                                    dataKey="loadTime"
+                                    stroke="#3b82f6"
+                                    strokeWidth={2}
+                                    dot={false}
+                                />
+                                <Line
+                                    type="monotone"
+                                    dataKey="errors"
+                                    stroke="#ef4444"
+                                    strokeWidth={2}
+                                    dot={false}
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </CardBody>
+                </Card>
+            </div>
         </ProjectTabsLayout>
     );
 };
